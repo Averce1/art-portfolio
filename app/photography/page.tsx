@@ -78,30 +78,33 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
   const padding = 32 // 16px padding on each side
-  const infoHeight = 120 // Height of the info panel
-  
-  const maxWidth = Math.min(viewportWidth - padding * 2, photo.dimensions.width)
-  const maxHeight = Math.min(viewportHeight - padding * 2 - infoHeight, photo.dimensions.height)
-  
-  let width, height
+  const infoWidth = 300 // Width of the info panel for vertical images
+  const infoHeight = 120 // Height of the info panel for horizontal images
+  const isVertical = aspectRatio < 1
 
-  // If image is wider than it is tall
-  if (aspectRatio > 1) {
-    width = maxWidth
-    height = width / aspectRatio
-    // If calculated height is too tall, scale down based on height
-    if (height > maxHeight) {
-      height = maxHeight
-      width = height * aspectRatio
-    }
-  } else {
-    // For vertical images, start with max height
+  let width, height, maxWidth, maxHeight
+
+  if (isVertical) {
+    // For vertical images, account for side panel
+    maxWidth = Math.min(viewportWidth - padding * 2 - infoWidth, photo.dimensions.width)
+    maxHeight = Math.min(viewportHeight - padding * 2, photo.dimensions.height)
+    
     height = maxHeight
     width = height * aspectRatio
-    // If calculated width is too wide, scale down based on width
     if (width > maxWidth) {
       width = maxWidth
       height = width / aspectRatio
+    }
+  } else {
+    // For horizontal images, account for bottom panel
+    maxWidth = Math.min(viewportWidth - padding * 2, photo.dimensions.width)
+    maxHeight = Math.min(viewportHeight - padding * 2 - infoHeight, photo.dimensions.height)
+    
+    width = maxWidth
+    height = width / aspectRatio
+    if (height > maxHeight) {
+      height = maxHeight
+      width = height * aspectRatio
     }
   }
 
@@ -111,8 +114,8 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
       onClick={onClose}
     >
       <div 
-        className="relative bg-white rounded-lg overflow-hidden"
-        style={{ width: `${width}px` }}
+        className={`relative bg-white rounded-lg overflow-hidden flex ${isVertical ? 'flex-row' : 'flex-col'}`}
+        style={{ width: isVertical ? `${width + infoWidth}px` : `${width}px` }}
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -122,24 +125,22 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
         >
           ✕
         </button>
-        <div>
-          <div className="relative" style={{ height: `${height}px` }}>
-            <Image
-              src={photo.image}
-              alt={photo.title}
-              width={width}
-              height={height}
-              className="object-contain"
-              priority
-            />
-          </div>
-          <div className="bg-white p-4 backdrop-blur-sm">
-            <h2 className="text-xl font-bold">{photo.title}</h2>
-            <p className="text-gray-600 text-sm mt-1">{photo.description}</p>
-            <span className="inline-block px-3 py-1 bg-black text-white text-xs rounded-full mt-2">
-              {photo.category}
-            </span>
-          </div>
+        <div className="relative" style={{ height: `${height}px`, width: `${width}px` }}>
+          <Image
+            src={photo.image}
+            alt={photo.title}
+            width={width}
+            height={height}
+            className="object-contain"
+            priority
+          />
+        </div>
+        <div className={`bg-white ${isVertical ? 'w-[300px] p-6' : 'w-full p-4'}`}>
+          <h2 className="text-xl font-bold">{photo.title}</h2>
+          <p className="text-gray-600 text-sm mt-2">{photo.description}</p>
+          <span className="inline-block px-3 py-1 bg-black text-white text-xs rounded-full mt-3">
+            {photo.category}
+          </span>
         </div>
       </div>
     </div>
