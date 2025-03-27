@@ -16,7 +16,7 @@ export default function Home() {
           />
         </div>
         <div className="relative z-10 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4">Your Name</h1>
+          <h1 className="text-5xl md:text-7xl font-bold mb-4">Isaac Young</h1>
           <p className="text-xl md:text-2xl mb-8">Artist & Photographer</p>
           <div className="space-x-4">
             <Link 

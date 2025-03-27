@@ -6,8 +6,8 @@ import Link from 'next/link'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Your Portfolio',
-  description: 'A showcase of my art and photography work',
+  title: 'Isaac Young - Art & Photography Portfolio',
+  description: 'A showcase of Isaac Young\'s art and photography work',
 }
 
 export default function RootLayout({
@@ -22,7 +22,7 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
               <Link href="/" className="text-xl font-bold">
-                Your Name
+                Isaac Young
               </Link>
               <div className="space-x-6">
                 <Link href="/art" className="hover:text-gray-600 transition">
@@ -38,7 +38,7 @@ export default function RootLayout({
         {children}
         <footer className="bg-gray-100 py-8">
           <div className="max-w-7xl mx-auto px-4 text-center text-gray-600">
-            <p>© {new Date().getFullYear()} Your Name. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Isaac Young. All rights reserved.</p>
           </div>
         </footer>
       </body>
