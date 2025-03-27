@@ -75,11 +75,11 @@ export default function PhotographyGallery() {
                 <Image
                   src={photo.image}
                   alt={photo.title}
-                  width={800}
-                  height={600}
+                  width={1200}
+                  height={900}
                   className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                   priority={photo.id <= 3}
-                  unoptimized
+                  quality={85}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
                   <button className="text-white opacity-0 group-hover:opacity-100 transition-opacity px-6 py-2 border-2 border-white rounded-lg hover:bg-white hover:text-black">
