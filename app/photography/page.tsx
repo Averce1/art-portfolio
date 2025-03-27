@@ -71,13 +71,14 @@ export default function PhotographyGallery() {
         <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
           {photos.map((photo) => (
             <div key={photo.id} className="mb-4 break-inside-avoid group">
-              <div className="relative overflow-hidden rounded-lg">
+              <div className="relative overflow-hidden rounded-lg aspect-[4/3]">
                 <Image
                   src={photo.image}
                   alt={photo.title}
-                  width={800}
-                  height={600}
-                  className="w-full transition-transform duration-300 group-hover:scale-105"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  priority={photo.id <= 3}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
                   <button className="text-white opacity-0 group-hover:opacity-100 transition-opacity px-6 py-2 border-2 border-white rounded-lg hover:bg-white hover:text-black">
