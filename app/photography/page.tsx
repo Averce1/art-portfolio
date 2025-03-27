@@ -77,45 +77,56 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
   const aspectRatio = photo.dimensions.width / photo.dimensions.height
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
-  const padding = 32 // 16px padding on each side
-  const infoWidth = 300 // Width of the info panel for vertical images
-  const infoHeight = 120 // Height of the info panel for horizontal images
+  const padding = 48 // Increased padding for better spacing
+  const infoWidth = 320 // Slightly wider info panel
+  const infoHeight = 140 // Slightly taller info panel
   const isVertical = aspectRatio < 1
 
-  let width, height, maxWidth, maxHeight
+  // Calculate maximum available space
+  const maxViewportWidth = viewportWidth - (padding * 2)
+  const maxViewportHeight = viewportHeight - (padding * 2)
+
+  let width, height
 
   if (isVertical) {
-    // For vertical images, account for side panel
-    maxWidth = Math.min(viewportWidth - padding * 2 - infoWidth, photo.dimensions.width)
-    maxHeight = Math.min(viewportHeight - padding * 2, photo.dimensions.height)
-    
-    height = maxHeight
-    width = height * aspectRatio
-    if (width > maxWidth) {
-      width = maxWidth
+    // For vertical images
+    const availableWidth = maxViewportWidth - infoWidth - padding // Extra padding between image and info
+    const availableHeight = maxViewportHeight
+
+    // Start with height constraint
+    height = Math.min(availableHeight, photo.dimensions.height, 900) // Max height of 900px
+    width = Math.min(height * aspectRatio, availableWidth)
+
+    // Adjust height if width is constrained
+    if (width === availableWidth) {
       height = width / aspectRatio
     }
   } else {
-    // For horizontal images, account for bottom panel
-    maxWidth = Math.min(viewportWidth - padding * 2, photo.dimensions.width)
-    maxHeight = Math.min(viewportHeight - padding * 2 - infoHeight, photo.dimensions.height)
-    
-    width = maxWidth
-    height = width / aspectRatio
-    if (height > maxHeight) {
-      height = maxHeight
+    // For horizontal images
+    const availableWidth = maxViewportWidth
+    const availableHeight = maxViewportHeight - infoHeight - padding // Extra padding between image and info
+
+    // Start with width constraint
+    width = Math.min(availableWidth, photo.dimensions.width, 1200) // Max width of 1200px
+    height = Math.min(width / aspectRatio, availableHeight)
+
+    // Adjust width if height is constrained
+    if (height === availableHeight) {
       width = height * aspectRatio
     }
   }
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-8 backdrop-blur-sm"
+      className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-12 backdrop-blur-sm"
       onClick={onClose}
     >
       <div 
         className={`relative bg-white rounded-lg overflow-hidden flex ${isVertical ? 'flex-row' : 'flex-col'}`}
-        style={{ width: isVertical ? `${width + infoWidth}px` : `${width}px` }}
+        style={{ 
+          width: isVertical ? `${width + infoWidth}px` : `${width}px`,
+          maxHeight: `${viewportHeight - padding * 2}px`
+        }}
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -125,7 +136,17 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
         >
           ✕
         </button>
-        <div className="relative" style={{ height: `${height}px`, width: `${width}px` }}>
+        
+        {/* Image Container */}
+        <div 
+          className={`relative flex items-center justify-center bg-gray-900 ${
+            isVertical ? 'border-r border-gray-200' : 'border-b border-gray-200'
+          }`}
+          style={{ 
+            width: `${width}px`,
+            height: isVertical ? '100%' : `${height}px`
+          }}
+        >
           <Image
             src={photo.image}
             alt={photo.title}
@@ -135,12 +156,29 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
             priority
           />
         </div>
-        <div className={`bg-white ${isVertical ? 'w-[300px] p-6' : 'w-full p-4'}`}>
-          <h2 className="text-xl font-bold">{photo.title}</h2>
-          <p className="text-gray-600 text-sm mt-2">{photo.description}</p>
-          <span className="inline-block px-3 py-1 bg-black text-white text-xs rounded-full mt-3">
-            {photo.category}
-          </span>
+
+        {/* Info Panel */}
+        <div 
+          className={`
+            flex flex-col justify-between
+            ${isVertical 
+              ? 'w-[320px] p-6 max-h-full overflow-y-auto' 
+              : 'w-full p-5'
+            }
+          `}
+        >
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">{photo.title}</h2>
+            <p className="text-gray-600 text-sm mt-3 leading-relaxed">{photo.description}</p>
+          </div>
+          <div className="mt-4">
+            <span className="inline-block px-4 py-1.5 bg-black text-white text-sm rounded-full">
+              {photo.category}
+            </span>
+            <div className="mt-3 text-sm text-gray-500">
+              {photo.dimensions.width} × {photo.dimensions.height}px
+            </div>
+          </div>
         </div>
       </div>
     </div>
