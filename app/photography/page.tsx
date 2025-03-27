@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // This would typically come from a database or CMS
 const photos = [
@@ -65,31 +65,57 @@ interface PhotoModalProps {
 function PhotoModal({ photo, onClose }: PhotoModalProps) {
   if (!photo) return null
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [onClose])
+
+  // Calculate dimensions to fit screen while maintaining aspect ratio
+  const aspectRatio = photo.dimensions.width / photo.dimensions.height
+  const maxWidth = Math.min(window.innerWidth * 0.9, photo.dimensions.width)
+  const maxHeight = Math.min(window.innerHeight * 0.8, photo.dimensions.height)
+  
+  let width = maxWidth
+  let height = width / aspectRatio
+  
+  if (height > maxHeight) {
+    height = maxHeight
+    width = height * aspectRatio
+  }
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="relative max-w-[90vw] max-h-[90vh]" onClick={e => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div 
+        className="relative bg-white rounded-lg overflow-hidden"
+        style={{ width: `${width}px`, height: `${height + 100}px` }}
+        onClick={e => e.stopPropagation()}
+      >
         <button
           onClick={onClose}
-          className="absolute -top-10 right-0 text-white hover:text-gray-300 text-xl"
+          className="absolute top-4 right-4 z-10 text-white hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center"
           aria-label="Close modal"
         >
           ✕
         </button>
-        <div className="bg-white p-4 rounded-lg">
-          <div className="relative" style={{ maxWidth: '100%', maxHeight: '80vh' }}>
-            <Image
-              src={photo.image}
-              alt={photo.title}
-              width={photo.dimensions.width}
-              height={photo.dimensions.height}
-              className="object-contain"
-              priority
-            />
-          </div>
-          <div className="mt-4">
-            <h2 className="text-2xl font-bold">{photo.title}</h2>
-            <p className="text-gray-600 mt-2">{photo.description}</p>
-            <span className="inline-block px-3 py-1 bg-gray-100 rounded-full text-sm mt-2">
+        <div className="h-full">
+          <Image
+            src={photo.image}
+            alt={photo.title}
+            width={width}
+            height={height}
+            className="object-contain"
+            priority
+          />
+          <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-bold">{photo.title}</h2>
+            <p className="text-gray-600 text-sm mt-1">{photo.description}</p>
+            <span className="inline-block px-3 py-1 bg-black text-white text-xs rounded-full mt-2">
               {photo.category}
             </span>
           </div>
@@ -101,6 +127,11 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
 
 export default function PhotographyGallery() {
   const [selectedPhoto, setSelectedPhoto] = useState<typeof photos[0] | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState("All")
+
+  const filteredPhotos = selectedCategory === "All" 
+    ? photos 
+    : photos.filter(photo => photo.category === selectedCategory)
 
   return (
     <main className="min-h-screen bg-white py-20 px-4">
@@ -113,7 +144,12 @@ export default function PhotographyGallery() {
           {categories.map((category) => (
             <button
               key={category}
-              className="px-6 py-2 rounded-full border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-all"
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full border transition-all ${
+                selectedCategory === category
+                ? 'border-black bg-black text-white'
+                : 'border-gray-300 hover:border-black hover:bg-black hover:text-white'
+              }`}
             >
               {category}
             </button>
@@ -122,7 +158,7 @@ export default function PhotographyGallery() {
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {photos.map((photo) => (
+          {filteredPhotos.map((photo) => (
             <div key={photo.id} className="group">
               <div className="relative h-[400px] mb-4 overflow-hidden rounded-lg bg-gray-100">
                 <Image
