@@ -75,25 +75,44 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
 
   // Calculate dimensions to fit screen while maintaining aspect ratio
   const aspectRatio = photo.dimensions.width / photo.dimensions.height
-  const maxWidth = Math.min(window.innerWidth * 0.9, photo.dimensions.width)
-  const maxHeight = Math.min(window.innerHeight * 0.8, photo.dimensions.height)
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+  const padding = 32 // 16px padding on each side
+  const infoHeight = 120 // Height of the info panel
   
-  let width = maxWidth
-  let height = width / aspectRatio
+  const maxWidth = Math.min(viewportWidth - padding * 2, photo.dimensions.width)
+  const maxHeight = Math.min(viewportHeight - padding * 2 - infoHeight, photo.dimensions.height)
   
-  if (height > maxHeight) {
+  let width, height
+
+  // If image is wider than it is tall
+  if (aspectRatio > 1) {
+    width = maxWidth
+    height = width / aspectRatio
+    // If calculated height is too tall, scale down based on height
+    if (height > maxHeight) {
+      height = maxHeight
+      width = height * aspectRatio
+    }
+  } else {
+    // For vertical images, start with max height
     height = maxHeight
     width = height * aspectRatio
+    // If calculated width is too wide, scale down based on width
+    if (width > maxWidth) {
+      width = maxWidth
+      height = width / aspectRatio
+    }
   }
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+      className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-8 backdrop-blur-sm"
       onClick={onClose}
     >
       <div 
         className="relative bg-white rounded-lg overflow-hidden"
-        style={{ width: `${width}px`, height: `${height + 100}px` }}
+        style={{ width: `${width}px` }}
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -103,16 +122,18 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
         >
           ✕
         </button>
-        <div className="h-full">
-          <Image
-            src={photo.image}
-            alt={photo.title}
-            width={width}
-            height={height}
-            className="object-contain"
-            priority
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 p-4 backdrop-blur-sm">
+        <div>
+          <div className="relative" style={{ height: `${height}px` }}>
+            <Image
+              src={photo.image}
+              alt={photo.title}
+              width={width}
+              height={height}
+              className="object-contain"
+              priority
+            />
+          </div>
+          <div className="bg-white p-4 backdrop-blur-sm">
             <h2 className="text-xl font-bold">{photo.title}</h2>
             <p className="text-gray-600 text-sm mt-1">{photo.description}</p>
             <span className="inline-block px-3 py-1 bg-black text-white text-xs rounded-full mt-2">
