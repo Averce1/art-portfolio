@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
 
 // This would typically come from a database or CMS
 const photos = [
@@ -49,6 +52,31 @@ const photos = [
 const categories = ["All", "Portrait", "Landscape", "Action", "Urban", "Architecture", "Street"]
 
 export default function PhotographyGallery() {
+  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadedImages, setLoadedImages] = useState(new Set())
+
+  const filteredPhotos = selectedCategory === "All" 
+    ? photos 
+    : photos.filter(photo => photo.category === selectedCategory)
+
+  useEffect(() => {
+    // Reset loading state when category changes
+    setIsLoading(true)
+    setLoadedImages(new Set())
+  }, [selectedCategory])
+
+  const handleImageLoad = (id: number) => {
+    setLoadedImages(prev => {
+      const newSet = new Set(prev)
+      newSet.add(id)
+      if (newSet.size === filteredPhotos.length) {
+        setIsLoading(false)
+      }
+      return newSet
+    })
+  }
+
   return (
     <main className="min-h-screen bg-white py-20 px-4">
       <div className="max-w-7xl mx-auto">
@@ -60,7 +88,12 @@ export default function PhotographyGallery() {
           {categories.map((category) => (
             <button
               key={category}
-              className="px-6 py-2 rounded-full border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-all"
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full border transition-all ${
+                selectedCategory === category
+                ? 'border-black bg-black text-white'
+                : 'border-gray-300 hover:border-black hover:bg-black hover:text-white'
+              }`}
             >
               {category}
             </button>
@@ -69,19 +102,27 @@ export default function PhotographyGallery() {
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {photos.map((photo) => (
+          {filteredPhotos.map((photo) => (
             <div key={photo.id} className="group">
-              <div className="relative h-[400px] mb-4 overflow-hidden rounded-lg">
+              <div className="relative h-[400px] mb-4 overflow-hidden rounded-lg bg-gray-100">
                 <Image
                   src={photo.image}
                   alt={photo.title}
-                  width={800}
-                  height={600}
-                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                  priority={photo.id <= 3}
-                  loading={photo.id <= 6 ? "eager" : "lazy"}
-                  quality={75}
+                  width={600}
+                  height={400}
+                  className={`object-cover w-full h-full transition-all duration-300 group-hover:scale-105 ${
+                    loadedImages.has(photo.id) ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  priority={photo.id <= 2}
+                  loading="lazy"
+                  quality={60}
+                  onLoad={() => handleImageLoad(photo.id)}
                 />
+                {!loadedImages.has(photo.id) && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
                   <button className="text-white opacity-0 group-hover:opacity-100 transition-opacity px-6 py-2 border-2 border-white rounded-lg hover:bg-white hover:text-black">
                     View Details

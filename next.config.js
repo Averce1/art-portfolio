@@ -12,6 +12,15 @@ const nextConfig = {
     formats: ['image/webp'],
     minimumCacheTTL: 60,
   },
+  // Add performance optimizations
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['react-icons'],
+  },
 }
 
 module.exports = nextConfig 
