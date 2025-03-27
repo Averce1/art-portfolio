@@ -68,17 +68,18 @@ export default function PhotographyGallery() {
         </div>
 
         {/* Gallery Grid */}
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {photos.map((photo) => (
-            <div key={photo.id} className="mb-4 break-inside-avoid group">
-              <div className="relative overflow-hidden rounded-lg aspect-[4/3]">
+            <div key={photo.id} className="group">
+              <div className="relative h-[400px] mb-4 overflow-hidden rounded-lg">
                 <Image
                   src={photo.image}
                   alt={photo.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  width={800}
+                  height={600}
+                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                   priority={photo.id <= 3}
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
                   <button className="text-white opacity-0 group-hover:opacity-100 transition-opacity px-6 py-2 border-2 border-white rounded-lg hover:bg-white hover:text-black">
@@ -86,7 +87,7 @@ export default function PhotographyGallery() {
                   </button>
                 </div>
               </div>
-              <div className="mt-2 space-y-2">
+              <div className="space-y-2">
                 <h3 className="text-xl font-semibold">{photo.title}</h3>
                 <p className="text-gray-600">{photo.description}</p>
                 <span className="inline-block px-3 py-1 bg-gray-100 rounded-full text-sm">
