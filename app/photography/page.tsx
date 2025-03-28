@@ -88,38 +88,24 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
 
   let width, height
 
-  if (isVertical) {
-    // For vertical images, prioritize fitting the height
-    const availableHeight = maxViewportHeight
-    const availableWidth = maxViewportWidth - infoWidth - padding
+  // For all images, use side panel layout
+  const availableWidth = maxViewportWidth - infoWidth - padding // Account for info panel and gap
+  const availableHeight = maxViewportHeight
 
-    // Start by fitting to height
-    height = Math.min(availableHeight, photo.dimensions.height)
-    width = height * aspectRatio
+  // Start by fitting to height
+  height = Math.min(availableHeight, photo.dimensions.height)
+  width = height * aspectRatio
 
-    // If width is too wide, scale down based on width
-    if (width > availableWidth) {
-      width = availableWidth
-      height = width / aspectRatio
-    }
-
-    // Final safety check to ensure it fits in viewport
-    if (height > availableHeight) {
-      height = availableHeight
-      width = height * aspectRatio
-    }
-  } else {
-    // For horizontal images
-    const availableWidth = maxViewportWidth
-    const availableHeight = maxViewportHeight - infoHeight - padding
-
-    width = Math.min(availableWidth, photo.dimensions.width)
+  // If width is too wide, scale down based on width
+  if (width > availableWidth) {
+    width = availableWidth
     height = width / aspectRatio
+  }
 
-    if (height > availableHeight) {
-      height = availableHeight
-      width = height * aspectRatio
-    }
+  // Final safety check to ensure it fits in viewport
+  if (height > availableHeight) {
+    height = availableHeight
+    width = height * aspectRatio
   }
 
   return (
@@ -128,9 +114,9 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
       onClick={onClose}
     >
       <div 
-        className={`relative bg-white rounded-lg overflow-hidden flex ${isVertical ? 'flex-row' : 'flex-col'}`}
+        className="relative bg-white rounded-lg overflow-hidden flex flex-row"
         style={{ 
-          width: isVertical ? `${width + infoWidth}px` : `${width}px`,
+          width: `${width + infoWidth}px`,
           maxHeight: `${maxViewportHeight}px`
         }}
         onClick={e => e.stopPropagation()}
@@ -145,12 +131,10 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
         
         {/* Image Container */}
         <div 
-          className={`relative flex items-center justify-center bg-gray-900 ${
-            isVertical ? 'border-r border-gray-200' : 'border-b border-gray-200'
-          }`}
+          className="relative flex items-center justify-center bg-gray-900 border-r border-gray-200"
           style={{ 
             width: `${width}px`,
-            height: isVertical ? `${height}px` : `${height}px`
+            height: `${height}px`
           }}
         >
           <Image
@@ -164,15 +148,7 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
         </div>
 
         {/* Info Panel */}
-        <div 
-          className={`
-            flex flex-col justify-between
-            ${isVertical 
-              ? 'w-[320px] p-6 h-full overflow-y-auto' 
-              : 'w-full p-5'
-            }
-          `}
-        >
+        <div className="w-[320px] p-6 h-full overflow-y-auto flex flex-col justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">{photo.title}</h2>
             <p className="text-gray-600 text-sm mt-3 leading-relaxed">{photo.description}</p>
