@@ -1,76 +1,101 @@
-import Link from 'next/link'
+'use client'
+
 import Image from 'next/image'
+import Link from 'next/link'
+
+const sections = [
+  {
+    title: "Photography",
+    description: "Capturing moments through the lens",
+    images: [
+      {
+        src: "/photography/Isaac_Young_Studio_Broad-2.jpg",
+        alt: "Studio Portrait",
+      },
+      {
+        src: "/photography/IsaacYoung_Photomerge_Sunset.jpg",
+        alt: "Sunset Panorama",
+      },
+      {
+        src: "/photography/Isaac_Young_SutterSpeed_Freeze.JPG",
+        alt: "Motion Freeze",
+      },
+      {
+        src: "/photography/IMG_3798.JPG",
+        alt: "Urban Scene",
+      }
+    ],
+    link: "/photography"
+  },
+  {
+    title: "Art",
+    description: "Digital and traditional artwork",
+    images: [
+      {
+        src: "/art/placeholder1.jpg",
+        alt: "Digital Art 1",
+      },
+      {
+        src: "/art/placeholder2.jpg",
+        alt: "Digital Art 2",
+      },
+      {
+        src: "/art/placeholder3.jpg",
+        alt: "Traditional Art 1",
+      },
+      {
+        src: "/art/placeholder4.jpg",
+        alt: "Traditional Art 2",
+      }
+    ],
+    link: "/art"
+  }
+]
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/hero-bg.jpg"
-            alt="Background"
-            fill
-            className="object-cover opacity-20"
-            priority
-          />
-        </div>
-        <div className="relative z-10 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4">Isaac Young</h1>
-          <p className="text-xl md:text-2xl mb-8">Artist & Photographer</p>
-          <div className="space-x-4">
-            <Link 
-              href="/art" 
-              className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition"
-            >
-              View Art
-            </Link>
-            <Link 
-              href="/photography" 
-              className="bg-white text-black border-2 border-black px-6 py-3 rounded-lg hover:bg-gray-100 transition"
-            >
-              View Photography
-            </Link>
-          </div>
-        </div>
-      </section>
+    <main className="min-h-screen bg-white py-20">
+      <div className="max-w-7xl mx-auto px-4">
+        <h1 className="text-4xl font-bold mb-4 text-center">Isaac Young</h1>
+        <p className="text-gray-600 text-center mb-16">Photographer & Digital Artist</p>
 
-      {/* Featured Work Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">Featured Work</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Featured Art */}
-            <div className="relative h-[400px] group">
-              <Image
-                src="/featured-art.jpg"
-                alt="Featured Art"
-                fill
-                className="object-cover rounded-lg"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-lg flex items-center justify-center">
-                <Link href="/art" className="text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  View Art Collection
-                </Link>
-              </div>
+        {sections.map((section) => (
+          <div key={section.title} className="mb-24">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-3">{section.title}</h2>
+              <p className="text-gray-600">{section.description}</p>
             </div>
-            {/* Featured Photography */}
-            <div className="relative h-[400px] group">
-              <Image
-                src="/featured-photo.jpg"
-                alt="Featured Photography"
-                fill
-                className="object-cover rounded-lg"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-lg flex items-center justify-center">
-                <Link href="/photography" className="text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  View Photography Collection
-                </Link>
+
+            <Link 
+              href={section.link}
+              className="block group"
+            >
+              <div className="grid grid-cols-2 gap-4 mb-6 aspect-square max-w-4xl mx-auto">
+                {section.images.map((image, index) => (
+                  <div 
+                    key={image.alt}
+                    className="relative aspect-square overflow-hidden bg-gray-100 rounded-lg"
+                  >
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      priority={index === 0}
+                    />
+                  </div>
+                ))}
               </div>
-            </div>
+              <div className="text-center">
+                <span className="inline-block px-6 py-3 border-2 border-black rounded-lg font-semibold hover:bg-black hover:text-white transition-colors">
+                  View {section.title} Gallery
+                </span>
+              </div>
+            </Link>
           </div>
-        </div>
-      </section>
+        ))}
+      </div>
     </main>
   )
 } 
