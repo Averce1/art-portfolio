@@ -101,8 +101,7 @@ export default function Page() {
                   {entry.images.map((image) => (
                     <div 
                       key={image.src}
-                      className="relative w-full aspect-[4/5] overflow-hidden rounded-lg cursor-pointer transform transition-transform hover:scale-[1.02]"
-                      onClick={() => setSelectedImage(image)}
+                      className="relative w-full aspect-[4/5] overflow-hidden rounded-lg"
                     >
                       <Image
                         src={image.src}
@@ -112,6 +111,15 @@ export default function Page() {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority={index === 0}
                       />
+                      {/* View details button - only visible on desktop */}
+                      <div 
+                        className="absolute inset-0 bg-black/0 hidden md:flex md:opacity-0 hover:opacity-100 transition-opacity duration-200 items-center justify-center cursor-pointer"
+                        onClick={() => setSelectedImage(image)}
+                      >
+                        <button className="bg-black/75 text-white px-4 py-2 rounded-lg">
+                          View Details
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
