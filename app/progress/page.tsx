@@ -48,7 +48,7 @@ export default function Progress() {
     
     const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight
-    const padding = screenWidth < 768 ? 32 : 64 // Smaller padding on mobile
+    const padding = screenWidth < 768 ? 16 : 64 // Reduced padding on mobile
     const maxWidth = screenWidth - padding
     const maxHeight = screenHeight - padding
     
@@ -144,7 +144,7 @@ export default function Progress() {
       {/* Updated Image Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center"
           onClick={() => setSelectedImage(null)}
         >
           <button
@@ -152,7 +152,7 @@ export default function Progress() {
               e.stopPropagation()
               setSelectedImage(null)
             }}
-            className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full z-50"
+            className="absolute top-2 right-2 text-white p-2 hover:bg-white/10 rounded-full z-50"
             aria-label="Close modal"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +161,7 @@ export default function Progress() {
           </button>
 
           <div 
-            className="relative w-full h-full flex items-center justify-center p-4 md:p-8"
+            className="relative w-full h-full flex items-center justify-center p-2 md:p-8"
             onClick={(e) => e.stopPropagation()}
           >
             <div 
