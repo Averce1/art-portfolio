@@ -10,7 +10,6 @@ const photos = [
     title: "Studio Portrait",
     image: "/photography/Isaac_Young_Studio_Broad-2.jpg",
     description: "Professional studio portrait showcasing dramatic lighting",
-    category: "Portrait",
     dimensions: { width: 2048, height: 1365 }
   },
   {
@@ -18,7 +17,6 @@ const photos = [
     title: "Sunset Panorama",
     image: "/photography/IsaacYoung_Photomerge_Sunset.jpg",
     description: "Stunning panoramic sunset captured in perfect timing",
-    category: "Landscape",
     dimensions: { width: 2048, height: 1365 }
   },
   {
@@ -26,7 +24,6 @@ const photos = [
     title: "Motion Freeze",
     image: "/photography/Isaac_Young_SutterSpeed_Freeze.JPG",
     description: "Capturing motion in a moment of perfect stillness",
-    category: "Action",
     dimensions: { width: 2048, height: 1365 }
   },
   {
@@ -34,7 +31,6 @@ const photos = [
     title: "Urban Scene",
     image: "/photography/IMG_3798.JPG",
     description: "Urban landscape capturing city life",
-    category: "Urban",
     dimensions: { width: 2048, height: 1365 }
   },
   {
@@ -42,7 +38,6 @@ const photos = [
     title: "City Perspective",
     image: "/photography/IMG_3785.JPG",
     description: "Unique perspective of urban architecture",
-    category: "Architecture",
     dimensions: { width: 2048, height: 1365 }
   },
   {
@@ -50,12 +45,9 @@ const photos = [
     title: "Street View",
     image: "/photography/IMG_3769.JPG",
     description: "Street photography capturing everyday moments",
-    category: "Street",
     dimensions: { width: 2048, height: 1365 }
   }
 ]
-
-const categories = ["All", "Portrait", "Landscape", "Action", "Urban", "Architecture", "Street"]
 
 interface PhotoModalProps {
   photo: typeof photos[0] | null
@@ -154,9 +146,6 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
             <p className="text-gray-600 text-sm mt-3 leading-relaxed">{photo.description}</p>
           </div>
           <div className="mt-4">
-            <span className="inline-block px-4 py-1.5 bg-black text-white text-sm rounded-full">
-              {photo.category}
-            </span>
             <div className="mt-3 text-sm text-gray-500">
               {photo.dimensions.width} × {photo.dimensions.height}px
             </div>
@@ -169,38 +158,16 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
 
 export default function PhotographyGallery() {
   const [selectedPhoto, setSelectedPhoto] = useState<typeof photos[0] | null>(null)
-  const [selectedCategory, setSelectedCategory] = useState("All")
-
-  const filteredPhotos = selectedCategory === "All" 
-    ? photos 
-    : photos.filter(photo => photo.category === selectedCategory)
 
   return (
     <main className="min-h-screen bg-white py-20 px-4">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold mb-4 text-center">Photography Gallery</h1>
         <p className="text-gray-600 text-center mb-12">A visual journey through moments captured in time</p>
-        
-        {/* Categories */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2 rounded-full border transition-all ${
-                selectedCategory === category
-                ? 'border-black bg-black text-white'
-                : 'border-gray-300 hover:border-black hover:bg-black hover:text-white'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPhotos.map((photo) => (
+          {photos.map((photo) => (
             <div key={photo.id} className="group">
               <div className="relative h-[400px] mb-4 overflow-hidden rounded-lg bg-gray-100">
                 <Image
@@ -224,9 +191,6 @@ export default function PhotographyGallery() {
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold">{photo.title}</h3>
                 <p className="text-gray-600">{photo.description}</p>
-                <span className="inline-block px-3 py-1 bg-gray-100 rounded-full text-sm">
-                  {photo.category}
-                </span>
               </div>
             </div>
           ))}
