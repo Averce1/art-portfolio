@@ -7,7 +7,7 @@ const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Photography', href: '/photography' },
   { name: 'Art', href: '/art' },
-  { name: 'Timeline', href: '/timeline' },
+  { name: 'Progress', href: '/progress' },
 ]
 
 export default function Navigation() {
