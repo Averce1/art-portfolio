@@ -56,45 +56,49 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white py-20">
       <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-4 text-center">Isaac Young</h1>
-        <p className="text-gray-600 text-center mb-16">Photographer & Digital Artist</p>
+        <div className="text-center mb-20">
+          <h1 className="text-4xl font-bold mb-4">Isaac Young</h1>
+          <p className="text-gray-600">Photographer & Digital Artist</p>
+        </div>
 
-        {sections.map((section) => (
-          <div key={section.title} className="mb-24">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-3">{section.title}</h2>
-              <p className="text-gray-600">{section.description}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {sections.map((section) => (
+            <div key={section.title} className="w-full">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold mb-2">{section.title}</h2>
+                <p className="text-gray-600 text-sm">{section.description}</p>
+              </div>
+
+              <Link 
+                href={section.link}
+                className="block group"
+              >
+                <div className="grid grid-cols-2 gap-3 mb-4 aspect-square max-w-md mx-auto">
+                  {section.images.map((image, index) => (
+                    <div 
+                      key={image.alt}
+                      className="relative aspect-square overflow-hidden bg-gray-100 rounded-md"
+                    >
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        priority={index === 0}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center">
+                  <span className="inline-block px-4 py-2 border-2 border-black rounded-md text-sm font-semibold hover:bg-black hover:text-white transition-colors">
+                    View {section.title} Gallery
+                  </span>
+                </div>
+              </Link>
             </div>
-
-            <Link 
-              href={section.link}
-              className="block group"
-            >
-              <div className="grid grid-cols-2 gap-4 mb-6 aspect-square max-w-4xl mx-auto">
-                {section.images.map((image, index) => (
-                  <div 
-                    key={image.alt}
-                    className="relative aspect-square overflow-hidden bg-gray-100 rounded-lg"
-                  >
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      priority={index === 0}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="text-center">
-                <span className="inline-block px-6 py-3 border-2 border-black rounded-lg font-semibold hover:bg-black hover:text-white transition-colors">
-                  View {section.title} Gallery
-                </span>
-              </div>
-            </Link>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </main>
   )
