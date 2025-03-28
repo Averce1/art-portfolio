@@ -77,9 +77,9 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
   const aspectRatio = photo.dimensions.width / photo.dimensions.height
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
-  const padding = 48 // Increased padding for better spacing
-  const infoWidth = 320 // Slightly wider info panel
-  const infoHeight = 140 // Slightly taller info panel
+  const padding = 48 // Padding around modal
+  const infoWidth = 320 // Width of info panel
+  const infoHeight = 140 // Height of info panel for horizontal images
   const isVertical = aspectRatio < 1
 
   // Calculate maximum available space
@@ -89,29 +89,35 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
   let width, height
 
   if (isVertical) {
-    // For vertical images
-    const availableWidth = maxViewportWidth - infoWidth - padding // Extra padding between image and info
+    // For vertical images, prioritize fitting the height
     const availableHeight = maxViewportHeight
+    const availableWidth = maxViewportWidth - infoWidth - padding
 
-    // Start with height constraint
-    height = Math.min(availableHeight, photo.dimensions.height, 900) // Max height of 900px
-    width = Math.min(height * aspectRatio, availableWidth)
+    // Start by fitting to height
+    height = Math.min(availableHeight, photo.dimensions.height)
+    width = height * aspectRatio
 
-    // Adjust height if width is constrained
-    if (width === availableWidth) {
+    // If width is too wide, scale down based on width
+    if (width > availableWidth) {
+      width = availableWidth
       height = width / aspectRatio
+    }
+
+    // Final safety check to ensure it fits in viewport
+    if (height > availableHeight) {
+      height = availableHeight
+      width = height * aspectRatio
     }
   } else {
     // For horizontal images
     const availableWidth = maxViewportWidth
-    const availableHeight = maxViewportHeight - infoHeight - padding // Extra padding between image and info
+    const availableHeight = maxViewportHeight - infoHeight - padding
 
-    // Start with width constraint
-    width = Math.min(availableWidth, photo.dimensions.width, 1200) // Max width of 1200px
-    height = Math.min(width / aspectRatio, availableHeight)
+    width = Math.min(availableWidth, photo.dimensions.width)
+    height = width / aspectRatio
 
-    // Adjust width if height is constrained
-    if (height === availableHeight) {
+    if (height > availableHeight) {
+      height = availableHeight
       width = height * aspectRatio
     }
   }
@@ -125,7 +131,7 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
         className={`relative bg-white rounded-lg overflow-hidden flex ${isVertical ? 'flex-row' : 'flex-col'}`}
         style={{ 
           width: isVertical ? `${width + infoWidth}px` : `${width}px`,
-          maxHeight: `${viewportHeight - padding * 2}px`
+          maxHeight: `${maxViewportHeight}px`
         }}
         onClick={e => e.stopPropagation()}
       >
@@ -144,15 +150,15 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
           }`}
           style={{ 
             width: `${width}px`,
-            height: isVertical ? '100%' : `${height}px`
+            height: isVertical ? `${height}px` : `${height}px`
           }}
         >
           <Image
             src={photo.image}
             alt={photo.title}
-            width={width}
-            height={height}
-            className="object-contain"
+            width={Math.round(width)}
+            height={Math.round(height)}
+            className="object-contain w-full h-full"
             priority
           />
         </div>
@@ -162,7 +168,7 @@ function PhotoModal({ photo, onClose }: PhotoModalProps) {
           className={`
             flex flex-col justify-between
             ${isVertical 
-              ? 'w-[320px] p-6 max-h-full overflow-y-auto' 
+              ? 'w-[320px] p-6 h-full overflow-y-auto' 
               : 'w-full p-5'
             }
           `}
