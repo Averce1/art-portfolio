@@ -5,29 +5,6 @@ import Link from 'next/link'
 
 const sections = [
   {
-    title: "Photography",
-    description: "Capturing moments through the lens",
-    images: [
-      {
-        src: "/photography/Isaac_Young_Studio_Broad-2.jpg",
-        alt: "Studio Portrait",
-      },
-      {
-        src: "/photography/IsaacYoung_Photomerge_Sunset.jpg",
-        alt: "Sunset Panorama",
-      },
-      {
-        src: "/photography/Isaac_Young_SutterSpeed_Freeze.JPG",
-        alt: "Motion Freeze",
-      },
-      {
-        src: "/photography/IMG_3798.JPG",
-        alt: "Urban Scene",
-      }
-    ],
-    link: "/photography"
-  },
-  {
     title: "Art",
     description: "Digital and traditional artwork",
     images: [
@@ -49,6 +26,29 @@ const sections = [
       }
     ],
     link: "/art"
+  },
+  {
+    title: "Photography",
+    description: "Capturing moments through the lens",
+    images: [
+      {
+        src: "/photography/Isaac_Young_Studio_Broad-2.jpg",
+        alt: "Studio Portrait",
+      },
+      {
+        src: "/photography/IsaacYoung_Photomerge_Sunset.jpg",
+        alt: "Sunset Panorama",
+      },
+      {
+        src: "/photography/Isaac_Young_SutterSpeed_Freeze.JPG",
+        alt: "Motion Freeze",
+      },
+      {
+        src: "/photography/IMG_3798.JPG",
+        alt: "Urban Scene",
+      }
+    ],
+    link: "/photography"
   }
 ]
 
@@ -56,17 +56,17 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white py-20">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-20">
-          <h1 className="text-4xl font-bold mb-4">Isaac Young</h1>
-          <p className="text-gray-600">Photographer & Digital Artist</p>
+        <div className="text-center mb-32">
+          <h1 className="text-6xl font-bold mb-6">Isaac Young</h1>
+          <p className="text-gray-600 text-xl">Photographer & Digital Artist</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {sections.map((section) => (
             <div key={section.title} className="w-full">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold mb-2">{section.title}</h2>
-                <p className="text-gray-600 text-sm">{section.description}</p>
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold mb-3">{section.title}</h2>
+                <p className="text-gray-600">{section.description}</p>
               </div>
 
               <Link 
