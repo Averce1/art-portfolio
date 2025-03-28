@@ -46,7 +46,8 @@ export default function Page() {
     
     const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight
-    const infoHeight = 80 // Fixed height for info panel
+    const isMobile = screenWidth < 768
+    const infoHeight = isMobile ? 0 : 80 // Only reserve space for info panel on desktop
     const maxWidth = screenWidth
     const maxHeight = screenHeight - infoHeight
     
@@ -140,7 +141,8 @@ export default function Page() {
           className="fixed inset-0 bg-black z-50 flex flex-col"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="h-20 bg-black/80 flex justify-between items-center px-4">
+          {/* Info panel - only visible on desktop */}
+          <div className="h-20 bg-black/80 hidden md:flex justify-between items-center px-4">
             <div className="text-white">
               <h3 className="text-lg font-semibold">{selectedImage.alt}</h3>
             </div>
@@ -157,6 +159,20 @@ export default function Page() {
               </svg>
             </button>
           </div>
+
+          {/* Mobile close button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setSelectedImage(null)
+            }}
+            className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full z-50 md:hidden"
+            aria-label="Close modal"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
 
           <div className="flex-1 flex items-center justify-center">
             <div className="relative w-full h-full">
