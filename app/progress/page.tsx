@@ -38,7 +38,35 @@ export default function Progress() {
   const [selectedImage, setSelectedImage] = useState<{
     src: string
     alt: string
+    width: number
+    height: number
   } | null>(null)
+
+  // Calculate optimal image dimensions for modal
+  const getModalImageDimensions = (image: { width: number, height: number }) => {
+    if (typeof window === 'undefined') return { width: '100%', height: '100%' }
+    
+    const screenWidth = window.innerWidth
+    const screenHeight = window.innerHeight
+    const padding = screenWidth < 768 ? 32 : 64 // Smaller padding on mobile
+    const maxWidth = screenWidth - padding
+    const maxHeight = screenHeight - padding
+    
+    const imageAspectRatio = image.width / image.height
+    const screenAspectRatio = maxWidth / maxHeight
+    
+    if (imageAspectRatio > screenAspectRatio) {
+      // Image is wider than screen aspect ratio
+      const width = maxWidth
+      const height = width / imageAspectRatio
+      return { width: Math.round(width), height: Math.round(height) }
+    } else {
+      // Image is taller than screen aspect ratio
+      const height = maxHeight
+      const width = height * imageAspectRatio
+      return { width: Math.round(width), height: Math.round(height) }
+    }
+  }
 
   return (
     <>
@@ -113,30 +141,43 @@ export default function Progress() {
         </div>
       </main>
 
-      {/* Image Modal */}
+      {/* Updated Image Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black/90 z-50 p-4 md:p-8 flex items-center justify-center"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
           onClick={() => setSelectedImage(null)}
         >
           <button
-            onClick={() => setSelectedImage(null)}
-            className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full"
+            onClick={(e) => {
+              e.stopPropagation()
+              setSelectedImage(null)
+            }}
+            className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full z-50"
             aria-label="Close modal"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div className="relative w-full h-full max-w-4xl max-h-[90vh] flex items-center justify-center">
-            <Image
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              fill
-              className="object-contain"
-              sizes="100vw"
-              priority
-            />
+
+          <div 
+            className="relative w-full h-full flex items-center justify-center p-4 md:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div 
+              className="relative"
+              style={getModalImageDimensions(selectedImage)}
+            >
+              <Image
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+                quality={95}
+              />
+            </div>
           </div>
         </div>
       )}
